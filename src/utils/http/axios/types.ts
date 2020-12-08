@@ -25,8 +25,9 @@ export interface CreateAxiosOptions extends AxiosRequestConfig {
 export interface Result<T = any> {
   code: number;
   type: 'success' | 'error' | 'warning';
-  message: string;
-  result: T;
+  msg: string;
+  serverTime: number;
+  data: T;
 }
 // multipart/form-data：上传文件
 export interface UploadFileParams {

@@ -3,23 +3,23 @@
     <div class="login-mask" />
     <div class="login-form-wrap">
       <div class="login-form mx-6">
-        <AppLocalePicker v-if="showLocale" class="login-form__locale" />
+        <!-- <AppLocalePicker v-if="showLocale" class="login-form__locale" /> -->
         <div class="login-form__content px-2 py-10">
           <header>
             <img :src="logo" class="mr-4" />
             <h1>{{ title }}</h1>
           </header>
 
-          <a-form class="mx-auto mt-10" :model="formData" :rules="formRules" ref="formRef">
-            <a-form-item name="account">
-              <a-input size="large" v-model:value="formData.account" placeholder="username: vben" />
+          <a-form class="mx-auto mt-10" :model="loginData" :rules="formRules" ref="formRef">
+            <a-form-item name="userName">
+              <a-input size="large" v-model:value="loginData.userName" placeholder="请输入用户名" />
             </a-form-item>
-            <a-form-item name="password">
+            <a-form-item name="pwd">
               <a-input-password
                 size="large"
                 visibilityToggle
-                v-model:value="formData.password"
-                placeholder="password: 123456"
+                v-model:value="loginData.pwd"
+                placeholder="请输入密码"
               />
             </a-form-item>
 
@@ -28,9 +28,9 @@
             </a-form-item> -->
             <a-row>
               <a-col :span="12">
-                <a-form-item>
+                <a-form-item name="remember">
                   <!-- No logic, you need to deal with it yourself -->
-                  <a-checkbox v-model:checked="autoLogin" size="small">{{
+                  <a-checkbox v-model:checked="loginData.remember" size="small">{{
                     t('sys.login.autoLogin')
                   }}</a-checkbox>
                 </a-form-item>
@@ -48,10 +48,11 @@
                 size="large"
                 class="rounded-sm"
                 :block="true"
-                @click="login"
                 :loading="formState.loading"
-                >{{ t('sys.login.loginButton') }}</a-button
+                @click="login"
               >
+                {{ t('sys.login.loginButton') }}
+              </a-button>
             </a-form-item>
           </a-form>
         </div>
@@ -64,7 +65,7 @@
   import { Checkbox } from 'ant-design-vue';
 
   import { Button } from '/@/components/Button';
-  import { AppLocalePicker } from '/@/components/Application';
+  // import { AppLocalePicker } from '/@/components/Application';
   // import { BasicDragVerify, DragVerifyActionType } from '/@/components/Verify/index';
 
   import { userStore } from '/@/store/modules/user';
@@ -72,7 +73,7 @@
   // import { appStore } from '/@/store/modules/app';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { useGlobSetting, useProjectSetting } from '/@/hooks/setting';
-  import logo from '/@/assets/images/logo.png';
+  import logo from '/@/assets/images/logo2.png';
   import { useI18n } from '/@/hooks/web/useI18n';
 
   export default defineComponent({
@@ -80,11 +81,11 @@
       //  BasicDragVerify,
       AButton: Button,
       ACheckbox: Checkbox,
-      AppLocalePicker,
+      // AppLocalePicker,
     },
     setup() {
       const formRef = ref<any>(null);
-      const autoLoginRef = ref(false);
+      // const autoLoginRef = ref(false);
       // const verifyRef = ref<RefInstanceType<DragVerifyActionType>>(null);
 
       const globSetting = useGlobSetting();
@@ -94,9 +95,10 @@
 
       // const openLoginVerifyRef = computed(() => appStore.getProjectConfig.openLoginVerify);
 
-      const formData = reactive({
-        account: 'vben',
-        password: '123456',
+      const loginData = reactive({
+        userName: 'wuzhi',
+        pwd: '123',
+        remember: true,
         // verify: undefined,
       });
       const formState = reactive({
@@ -104,10 +106,8 @@
       });
 
       const formRules = reactive({
-        account: [{ required: true, message: t('sys.login.accountPlaceholder'), trigger: 'blur' }],
-        password: [
-          { required: true, message: t('sys.login.passwordPlaceholder'), trigger: 'blur' },
-        ],
+        userName: [{ required: true, message: t('sys.login.accountPlaceholder'), trigger: 'blur' }],
+        pwd: [{ required: true, message: t('sys.login.passwordPlaceholder'), trigger: 'blur' }],
         // verify: unref(openLoginVerifyRef) ? [{ required: true, message: '请通过验证码校验' }] : [],
       });
 
@@ -126,14 +126,20 @@
           const data = await form.validate();
           const userInfo = await userStore.login(
             toRaw({
-              password: data.password,
-              username: data.account,
+              pwd: data.pwd,
+              userName: data.userName,
+              remember: data.remember,
             })
           );
-          if (userInfo) {
+          // notification.success({
+          //   message: '登录成功',
+          //   description: `欢迎: ${userInfo.systemUserName}`,
+          //   duration: 3,
+          // });
+          if (userInfo?.systemUserId) {
             notification.success({
-              message: t('sys.login.loginSuccessTitle'),
-              description: `${t('sys.login.loginSuccessDesc')}: ${userInfo.realName}`,
+              message: '登录成功',
+              description: `欢迎: ${userInfo.systemUserName}`,
               duration: 3,
             });
           }
@@ -146,11 +152,11 @@
       return {
         formRef,
         // verifyRef,
-        formData,
+        loginData,
         formState,
         formRules,
         login: handleLogin,
-        autoLogin: autoLoginRef,
+        // autoLogin: autoLoginRef,
         // openLoginVerify: openLoginVerifyRef,
         title: globSetting && globSetting.title,
         logo,
@@ -207,9 +213,9 @@
         // height: 90%;
         justify-content: center;
         align-items: center;
-        .respond-to(xlarge, {
-        justify-content: flex-end;
-          });
+        // .respond-to(xlarge, {
+        // justify-content: flex-end;
+        //   });
       }
 
       &__content {

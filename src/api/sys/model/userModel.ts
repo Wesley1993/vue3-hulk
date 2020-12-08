@@ -1,9 +1,13 @@
 /**
  * @description: Login interface parameters
+ * @userName 用户名
+ * @pwd 用户密码
+ * @remember 是否记住密码
  */
 export interface LoginParams {
-  username: string;
-  password: string;
+  userName: string;
+  pwd: string;
+  remember?: boolean;
 }
 
 /**
@@ -22,14 +26,20 @@ export interface RoleInfo {
  * @description: Login interface return value
  */
 export interface LoginResultModel {
-  userId: string | number;
-  token: string;
-  role: RoleInfo;
+  systemUserInfo: SystemUserInfo;
 }
 
 /**
  * @description: Get user information return value
  */
+
+export interface SystemUserInfo {
+  systemUserId: string;
+  systemUserToken: string;
+  systemUserName: string;
+  systemUserMobile?: string;
+  systemUserMail?: string;
+}
 export interface GetUserInfoByUserIdModel {
   role: RoleInfo;
   // 用户id

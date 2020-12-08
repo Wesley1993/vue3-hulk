@@ -45,3 +45,10 @@
     },
   });
 </script>
+<style lang="less">
+  html,
+  body {
+    // min-width: 1600px;
+    // overflow: auto;
+  }
+</style>

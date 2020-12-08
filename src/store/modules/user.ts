@@ -1,7 +1,7 @@
 import type {
   LoginParams,
-  GetUserInfoByUserIdModel,
   GetUserInfoByUserIdParams,
+  SystemUserInfo,
 } from '/@/api/sys/model/userModel';
 
 import store from '/@/store/index';
@@ -22,7 +22,7 @@ import { setLocal, getLocal, getSession, setSession } from '/@/utils/helper/pers
 import { useProjectSetting } from '/@/hooks/setting';
 import { useI18n } from '/@/hooks/web/useI18n';
 
-export type UserInfo = Omit<GetUserInfoByUserIdModel, 'roles'>;
+export type UserInfo = Omit<SystemUserInfo, 'roles'>;
 
 const NAME = 'user';
 hotModuleUnregisterModule(NAME);
@@ -94,20 +94,21 @@ class User extends VuexModule {
    * @description: login
    */
   @Action
-  async login(params: LoginParams, goHome = true): Promise<GetUserInfoByUserIdModel | null> {
+  async login(params: LoginParams, goHome = true): Promise<SystemUserInfo | null> {
     try {
       const data = await loginApi(params);
-      const { token, userId } = data;
+      const { systemUserToken } = data.systemUserInfo;
       // get user info
-      const userInfo = await this.getUserInfoAction({ userId });
+      // const userInfo = await this.getUserInfoAction({ systemUserId });
+      // const userInfo = { systemUserId };
 
       // save token
-      this.commitTokenState(token);
+      this.commitTokenState(systemUserToken);
 
       // const name = FULL_PAGE_NOT_FOUND_ROUTE.name;
       // name && router.removeRoute(name);
       goHome && router.push(PageEnum.BASE_HOME);
-      return userInfo;
+      return data.systemUserInfo;
     } catch (error) {
       return null;
     }

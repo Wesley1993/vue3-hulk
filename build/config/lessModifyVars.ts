@@ -1,7 +1,8 @@
 /**
  * less global variable
  */
-const primaryColor = '#018ffb';
+const primaryColor = '#199598';
+// const primaryColor = '#018ffb';
 // const primaryColor = '#0065cc';
 //{
 const modifyVars = {
